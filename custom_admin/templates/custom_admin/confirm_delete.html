@@ -1,0 +1,28 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <div class="card-header">
+        <h2>Confirm Delete</h2>
+    </div>
+
+    <div style="padding: 24px; text-align: center;">
+        <p style="font-size: 18px; margin-bottom: 20px;">
+            Are you sure you want to delete <strong>{{ object_type }}: {{ object.name|default:object.username }}</strong>?
+        </p>
+        <p style="color: #dc3545; margin-bottom: 30px;">
+            ⚠️ This action cannot be undone!
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <a href="{% url cancel_url %}" class="btn-secondary" style="padding: 10px 20px; text-decoration: none; display: inline-block;">Cancel</a>
+                <button type="submit" class="btn-danger" style="padding: 10px 20px;">Confirm Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

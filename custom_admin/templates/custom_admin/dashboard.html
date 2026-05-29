@@ -1,0 +1,129 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+            <h3>{{ total_products }}</h3>
+            <p>Total Products</p>
+        </div>
+        <a href="{% url 'custom_admin:product_list' %}" class="stat-link">View Products →</a>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🏷️</div>
+        <div class="stat-info">
+            <h3>{{ total_categories }}</h3>
+            <p>Categories</p>
+        </div>
+        <a href="{% url 'custom_admin:category_list' %}" class="stat-link">Manage Categories →</a>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-info">
+            <h3>{{ total_brands }}</h3>
+            <p>Brands</p>
+        </div>
+        <a href="{% url 'custom_admin:brand_list' %}" class="stat-link">Manage Brands →</a>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🛒</div>
+        <div class="stat-info">
+            <h3>{{ total_orders }}</h3>
+            <p>Total Orders</p>
+        </div>
+        <a href="{% url 'custom_admin:order_list' %}" class="stat-link">View Orders →</a>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+            <h3>{{ pending_orders }}</h3>
+            <p>Pending Orders</p>
+        </div>
+        <a href="{% url 'custom_admin:order_list' %}?status=pending" class="stat-link">Process →</a>
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <h2>Recent Categories</h2>
+        <a href="{% url 'custom_admin:category_add' %}" class="btn-primary">+ Add New Category</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in recent_categories %}
+                <tr>
+                    <td>{{ category.id }}</td>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.slug|default:"-" }}</td>
+                    <td>{{ category.created_at|date:"Y-m-d" }}</td>
+                    <td class="actions">
+                        <a href="{% url 'custom_admin:category_edit' category.id %}" class="btn-icon edit" title="Edit">✏️</a>
+                        <button onclick="confirmDelete('category', {{ category.id }}, '{{ category.name }}')" class="btn-icon delete" title="Delete">🗑️</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No categories found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card-footer">
+        <a href="{% url 'custom_admin:category_list' %}" class="view-all">View All Categories →</a>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>Confirm Delete</h3>
+        <p>Are you sure you want to delete "<span id="deleteItemName"></span>"?</p>
+        <p class="warning">This action cannot be undone!</p>
+        <form id="deleteForm" method="POST">
+            {% csrf_token %}
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function confirmDelete(itemType, itemId, itemName) {
+    document.getElementById('deleteItemName').innerText = itemName;
+    document.getElementById('deleteForm').action = '/admin-panel/' + itemType + 's/delete/' + itemId + '/';
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

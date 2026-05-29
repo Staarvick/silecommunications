@@ -1,0 +1,131 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}User Details - {{ user_detail.username }}{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <div class="card-header">
+        <h2>User Details: {{ user_detail.username }}</h2>
+        <a href="{% url 'custom_admin:user_list' %}" class="btn-primary">Back to Users</a>
+    </div>
+    
+    <div style="padding: 24px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            <div>
+                <h3>Personal Information</h3>
+                <table style="width: 100%; margin-top: 10px;">
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Username:</td>
+                        <td style="padding: 8px;">{{ user_detail.username }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Email:</td>
+                        <td style="padding: 8px;">{{ user_detail.email }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Full Name:</td>
+                        <td style="padding: 8px;">{{ user_detail.get_full_name|default:"Not provided" }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">First Name:</td>
+                        <td style="padding: 8px;">{{ user_detail.first_name|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Last Name:</td>
+                        <td style="padding: 8px;">{{ user_detail.last_name|default:"-" }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div>
+                <h3>Account Information</h3>
+                <table style="width: 100%; margin-top: 10px;">
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Role:</td>
+                        <td style="padding: 8px;">
+                            {% if user_detail.is_superuser %}
+                                <span style="color: #dc3545;">Super Admin</span>
+                            {% elif user_detail.is_staff %}
+                                <span style="color: #ff9800;">Staff</span>
+                            {% else %}
+                                <span style="color: #4caf50;">Customer</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Status:</td>
+                        <td style="padding: 8px;">
+                            {% if user_detail.is_active %}
+                                <span style="color: #4caf50;">Active</span>
+                            {% else %}
+                                <span style="color: #dc3545;">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Date Joined:</td>
+                        <td style="padding: 8px;">{{ user_detail.date_joined|date:"Y-m-d H:i:s" }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Last Login:</td>
+                        <td style="padding: 8px;">{{ user_detail.last_login|date:"Y-m-d H:i:s"|default:"Never" }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            <h3>Actions</h3>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <form method="POST" action="{% url 'custom_admin:toggle_user_status' user_detail.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-primary">
+                        {% if user_detail.is_active %}Deactivate User{% else %}Activate User{% endif %}
+                    </button>
+                </form>
+                
+                {% if not user_detail.is_superuser %}
+                <button onclick="confirmDelete('user', {{ user_detail.id }}, '{{ user_detail.username }}')" class="btn-danger" style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">
+                    Delete User
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>Confirm Delete</h3>
+        <p>Are you sure you want to delete user "<span id="deleteItemName"></span>"?</p>
+        <p class="warning">This action cannot be undone!</p>
+        <form id="deleteForm" method="POST">
+            {% csrf_token %}
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function confirmDelete(itemType, itemId, itemName) {
+    document.getElementById('deleteItemName').innerText = itemName;
+    document.getElementById('deleteForm').action = `/admin-panel/users/delete/${itemId}/`;
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

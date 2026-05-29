@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Sile Communications{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'products:shop' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:shop' %}">Shop</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:category' product.category.slug %}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Product Images -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 text-center">
+                    {% if product.main_image and product.main_image.url %}
+                        <img src="{{ product.main_image.url }}" class="img-fluid" alt="{{ product.name }}" style="max-height: 400px; object-fit: contain;">
+                    {% else %}
+                        <div class="bg-light p-5 rounded-4">
+                            <i class="bi bi-image display-1 text-secondary"></i>
+                            <p class="mt-2 text-muted">No image available</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Additional images placeholder (if you have a gallery) -->
+            {% if product.additional_images %}
+            <div class="row mt-3 g-2">
+                {% for img in product.additional_images.all %}
+                <div class="col-3">
+                    <img src="{{ img.image.url }}" class="img-fluid rounded border cursor-pointer" onclick="changeMainImage(this.src)">
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h1 class="h2 fw-bold mb-3">{{ product.name }}</h1>
+                    <div class="mb-3">
+                        <span class="badge bg-success">{{ product.brand.name }}</span>
+                        <span class="badge bg-secondary">{{ product.category.name }}</span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="display-6 fw-bold text-success">KSh {{ product.price }}</span>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-muted">{{ product.short_description|default:"No description available" }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5>Full Description</h5>
+                        <p>{{ product.full_description|default:"No additional details"|linebreaks }}</p>
+                    </div>
+                    
+                    <!-- Stock Status -->
+                    <div class="mb-4">
+                        {% if product.stock > 0 %}
+                            <span class="badge bg-success fs-6 px-3 py-2">In Stock ({{ product.stock }} available)</span>
+                        {% else %}
+                            <span class="badge bg-danger fs-6 px-3 py-2">Out of Stock</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Add to Cart Form -->
+                    <form method="post" action="{% url 'cart:add_to_cart' product.id %}">
+                        {% csrf_token %}
+                        <div class="row g-3 align-items-end">
+                            <div class="col-auto">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1" max="{{ product.stock }}" style="width: 100px;">
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-success btn-lg rounded-pill px-5" {% if product.stock == 0 %}disabled{% endif %}>
+                                    <i class="bi bi-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="mt-5">
+        <h3 class="mb-4">You May Also Like</h3>
+        <div class="row g-4">
+            {% for related in related_products %}
+            <div class="col-md-3 col-sm-6">
+                <div class="card product-card h-100">
+                    {% if related.main_image and related.main_image.url %}
+                        <img src="{{ related.main_image.url }}" class="card-img-top" alt="{{ related.name }}" style="height: 180px; object-fit: contain; padding: 10px;">
+                    {% else %}
+                        <div class="bg-light text-center p-4" style="height: 180px;">
+                            <i class="bi bi-image fs-1 text-secondary"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">{{ related.name }}</h6>
+                        <span class="h5 text-success">KSh {{ related.price }}</span>
+                    </div>
+                    <div class="card-footer bg-white border-0 pb-3">
+                        <a href="{% url 'products:product_detail' related.category.slug related.brand.slug related.slug %}" class="btn btn-outline-success w-100 rounded-pill">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function changeMainImage(src) {
+        document.querySelector('.card-body img').src = src;
+    }
+</script>
+{% endblock %}

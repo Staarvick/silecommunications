@@ -1,0 +1,522 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sile Communications - Safaricom Partner{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION WITH CAROCELL (YOUR STATIC IMAGES) -->
+<div class="hero-carocell" id="heroCarocell">
+    <div class="hero-bg" id="heroBg"></div>
+
+    <div class="hero-content">
+        <h1>Welcome to Sile Communications</h1>
+        <p>Your trusted Safaricom Partner in Kitale Town</p>
+        <a href="{% url 'products:shop' %}" class="btn btn-primary">Shop Now</a>
+    </div>
+
+    <!-- Carocell Controls -->
+    <div class="carocell-controls">
+        <div class="ctrl-header">
+            <i class="fas fa-images"></i> Carocell Gallery
+            <span id="bgCounter" class="counter-badge">1/8</span>
+        </div>
+        <div class="ctrl-nav">
+            <button id="bgPrevBtn" class="bg-nav-btn">?</button>
+            <div id="bgDots" class="bg-dots"></div>
+            <button id="bgNextBtn" class="bg-nav-btn">?</button>
+        </div>
+        <div class="ctrl-actions">
+            <label class="upload-btn">
+                <i class="fas fa-upload"></i> Add Your Images
+                <input type="file" id="bgImageUploader" multiple accept="image/jpeg,image/png,image/webp,image/jpg" hidden>
+            </label>
+            <button id="bgRemoveBtn" class="action-btn" title="Remove current"><i class="fas fa-trash-alt"></i></button>
+            <button id="bgResetBtn" class="action-btn" title="Reset to default"><i class="fas fa-undo-alt"></i></button>
+        </div>
+        <div class="ctrl-note">?? Your product images: Phones, Laptops, Solar</div>
+    </div>
+</div>
+
+<!-- REST OF YOUR EXISTING PAGE CONTENT (unchanged) -->
+<div class="page-content">
+    <!-- Original Product Carousel -->
+    {% if carousel_products %}
+    <div class="carousel-container">
+        <div class="carousel-slides" id="carouselSlides">
+            {% for product in carousel_products %}
+            <div class="carousel-slide">
+                <div class="carousel-content">
+                    <div class="carousel-text">
+                        <h2>{{ product.name }}</h2>
+                        <p>{{ product.short_description|default:product.full_description|truncatewords:15 }}</p>
+                        <div class="carousel-price">KSh {{ product.price }}</div>
+                        <div class="carousel-buttons">
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Shop Now</a>
+                            <form method="post" action="{% url 'cart:add_to_cart' product.id %}?next={{ request.path }}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-secondary">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="carousel-image">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="placeholder-image">??</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button class="carousel-btn prev" onclick="changeSlide(-1)">?</button>
+        <button class="carousel-btn next" onclick="changeSlide(1)">?</button>
+
+        <div class="carousel-dots">
+            {% for product in carousel_products %}
+            <span class="dot" onclick="currentSlide({{ forloop.counter0 }})"></span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Category Sections (unchanged) -->
+    <h2 class="section-title">?? Latest Smartphones</h2>
+    <div class="product-grid">
+        {% for product in phones %}
+        <div class="product-card">
+            <div class="product-info">
+                <div class="product-title">{{ product.name }}</div>
+                <div class="product-price">KSh {{ product.price }}</div>
+                <div class="product-description">{{ product.short_description|truncatewords:10 }}</div>
+                <form method="post" action="{% url 'cart:add_to_cart' product.id %}?next={{ request.path }}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                </form>
+                <a href="{{ product.get_absolute_url }}" class="btn btn-secondary btn-sm">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No phones available at the moment.</p>
+        {% endfor %}
+    </div>
+
+    <h2 class="section-title">?? Laptops & Computers</h2>
+    <div class="product-grid">
+        {% for product in laptops %}
+        <div class="product-card">
+            <div class="product-info">
+                <div class="product-title">{{ product.name }}</div>
+                <div class="product-price">KSh {{ product.price }}</div>
+                <div class="product-description">{{ product.short_description|truncatewords:10 }}</div>
+                <form method="post" action="{% url 'cart:add_to_cart' product.id %}?next={{ request.path }}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                </form>
+                <a href="{{ product.get_absolute_url }}" class="btn btn-secondary btn-sm">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No laptops available at the moment.</p>
+        {% endfor %}
+    </div>
+
+    <h2 class="section-title">?? Solar Energy Solutions</h2>
+    <div class="product-grid">
+        {% for product in solar_products %}
+        <div class="product-card">
+            <div class="product-info">
+                <div class="product-title">{{ product.name }}</div>
+                <div class="product-price">KSh {{ product.price }}</div>
+                <div class="product-description">{{ product.short_description|truncatewords:10 }}</div>
+                <form method="post" action="{% url 'cart:add_to_cart' product.id %}?next={{ request.path }}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                </form>
+                <a href="{{ product.get_absolute_url }}" class="btn btn-secondary btn-sm">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No solar products available at the moment.</p>
+        {% endfor %}
+    </div>
+
+    <h2 class="section-title">? Featured Products</h2>
+    <div class="product-grid">
+        {% for product in featured_products %}
+        <div class="product-card">
+            <div class="product-info">
+                <div class="product-title">{{ product.name }}</div>
+                <div class="product-price">KSh {{ product.price }}</div>
+                <form method="post" action="{% url 'cart:add_to_cart' product.id %}?next={{ request.path }}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                </form>
+                <a href="{{ product.get_absolute_url }}" class="btn btn-secondary btn-sm">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No featured products available.</p>
+        {% endfor %}
+    </div>
+
+    <h2 class="section-title">?? Shop by Category</h2>
+    <div class="category-grid">
+        {% for category in categories %}
+        <div class="category-card">
+            <h3>{{ category.name }}</h3>
+            <p>{{ category.description|truncatewords:10 }}</p>
+            <a href="{% url 'products:category' category.slug %}" class="btn btn-secondary">View Products</a>
+        </div>
+        {% empty %}
+        <p>No categories available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .hero-carocell {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 40px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        transition: background-image 0.4s ease-in-out;
+        z-index: 0;
+    }
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+        color: white;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(3px);
+        border-radius: 20px;
+        width: 80%;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .hero-content h1 {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .hero-content p {
+        font-size: 1.3rem;
+        margin-bottom: 25px;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .hero-content .btn-primary {
+        background: #00a650;
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+    }
+    .carocell-controls {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+        border-radius: 16px;
+        padding: 8px 12px;
+        color: white;
+        font-size: 0.8rem;
+        border: 1px solid rgba(255,255,255,0.2);
+        width: 240px;
+    }
+    .ctrl-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        margin-bottom: 6px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .counter-badge {
+        background: rgba(0,0,0,0.6);
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+    }
+    .ctrl-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .bg-nav-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        transition: 0.2s;
+    }
+    .bg-nav-btn:hover {
+        background: rgba(255,255,255,0.5);
+    }
+    .bg-dots {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+        flex: 1;
+    }
+    .bg-dot {
+        width: 7px;
+        height: 7px;
+        background: rgba(255,255,255,0.5);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .bg-dot.active {
+        background: white;
+        width: 18px;
+        border-radius: 10px;
+    }
+    .ctrl-actions {
+        display: flex;
+        gap: 6px;
+        justify-content: space-between;
+        margin-top: 6px;
+    }
+    .upload-btn, .action-btn {
+        background: rgba(0,0,0,0.6);
+        border: none;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .upload-btn:hover, .action-btn:hover {
+        background: #00a650;
+    }
+    .ctrl-note {
+        font-size: 0.6rem;
+        text-align: center;
+        margin-top: 6px;
+        opacity: 0.7;
+    }
+    .page-content {
+        background: #f8f9fa;
+        padding-bottom: 30px;
+        border-radius: 20px 20px 0 0;
+    }
+    .carousel-container {
+        background: linear-gradient(135deg, #00a650 0%, #008c44 100%);
+        margin-top: 0;
+    }
+    .section-title {
+        color: #00a650;
+        border-left-color: #00a650;
+        background: transparent;
+    }
+    .product-card, .category-card {
+        background: white;
+    }
+    @media (max-width: 768px) {
+        .hero-carocell { height: 400px; }
+        .hero-content h1 { font-size: 1.8rem; }
+        .hero-content p { font-size: 1rem; }
+        .hero-content { width: 90%; padding: 15px; }
+        .carocell-controls { width: 220px; padding: 6px 10px; bottom: 10px; right: 10px; }
+    }
+</style>
+
+<script>
+    (function() {
+        // ---- YOUR EXACT IMAGE FILENAMES FROM static/images/ ----
+        // (Make sure the file with no extension has been renamed to .jpg)
+        const yourImages = [
+            "{% static 'images/alex-knight-j4uKnnN43_M-unspalsh.jpg' %}",
+            "{% static 'images/american-public-power-association-513dBrM.jpg' %}",  // added .jpg
+            "{% static 'images/andras-vas-Bd7gNNWJbKU-unspalsh.jpg' %}",
+            "{% static 'images/austin-poon-JO_Se8wBqAK-unspalsh.jpg' %}",
+            "{% static 'images/chelsea-WusCSM-TM8-unspalsh.jpg' %}",
+            "{% static 'images/daniel-elishevskyi-atT2G50_Oc0-unspalsh.jpg' %}",
+            "{% static 'images/deli-G3UJU1fwxl-unspalsh.jpg' %}",
+            "{% static 'images/neli-Son6wdRuK7bVTE-unspalsh.jpg' %}",
+            "{% static 'images/nuno-marques-O6brjL3vZF4-unspalsh.jpg' %}",
+            "{% static 'images/rahul-chakraborty-xSxHtAsfSA-unspalsh.jpg' %}"
+        ];
+
+        const DEFAULT_HD_IMAGES = yourImages;
+
+        let bgImages = DEFAULT_HD_IMAGES.map(src => ({ src: src, isBlob: false }));
+        let currentIndex = 0;
+        const heroBg = document.getElementById('heroBg');
+        const prevBtn = document.getElementById('bgPrevBtn');
+        const nextBtn = document.getElementById('bgNextBtn');
+        const dotsContainer = document.getElementById('bgDots');
+        const counterSpan = document.getElementById('bgCounter');
+        const uploadInput = document.getElementById('bgImageUploader');
+        const removeBtn = document.getElementById('bgRemoveBtn');
+        const resetBtn = document.getElementById('bgResetBtn');
+
+        function revokeBlob(imgObj) {
+            if (imgObj && imgObj.isBlob && imgObj.src && imgObj.src.startsWith('blob:')) {
+                URL.revokeObjectURL(imgObj.src);
+            }
+        }
+
+        function updateHeroBackground() {
+            if (!bgImages.length) {
+                heroBg.style.backgroundImage = "linear-gradient(135deg, #1e3c2c, #0f2b1f)";
+                counterSpan.innerText = `0 / 0`;
+                renderDots();
+                return;
+            }
+            const img = bgImages[currentIndex];
+            heroBg.style.backgroundImage = `url('${img.src}')`;
+            counterSpan.innerText = `${currentIndex+1} / ${bgImages.length}`;
+            renderDots();
+        }
+
+        function renderDots() {
+            dotsContainer.innerHTML = '';
+            if (!bgImages.length) {
+                dotsContainer.innerHTML = '<span style="font-size:9px;">no images</span>';
+                return;
+            }
+            for (let i = 0; i < bgImages.length; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'bg-dot';
+                if (i === currentIndex) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    if (i !== currentIndex && i >= 0 && i < bgImages.length) {
+                        currentIndex = i;
+                        updateHeroBackground();
+                    }
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function addImagesFromFiles(files) {
+            if (!files.length) return;
+            const newImages = [];
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const blobUrl = URL.createObjectURL(file);
+                    newImages.push({ src: blobUrl, isBlob: true });
+                }
+            }
+            if (!newImages.length) return;
+            const wasEmpty = bgImages.length === 0;
+            bgImages.push(...newImages);
+            if (wasEmpty && bgImages.length) currentIndex = 0;
+            updateHeroBackground();
+        }
+
+        function removeCurrentImage() {
+            if (!bgImages.length) return;
+            const toRemove = bgImages[currentIndex];
+            revokeBlob(toRemove);
+            bgImages.splice(currentIndex, 1);
+            if (!bgImages.length) {
+                currentIndex = -1;
+                updateHeroBackground();
+                return;
+            }
+            if (currentIndex >= bgImages.length) currentIndex = bgImages.length - 1;
+            if (currentIndex < 0 && bgImages.length) currentIndex = 0;
+            updateHeroBackground();
+        }
+
+        function resetToDefaultHD() {
+            for (let img of bgImages) revokeBlob(img);
+            bgImages = DEFAULT_HD_IMAGES.map(src => ({ src: src, isBlob: false }));
+            currentIndex = 0;
+            updateHeroBackground();
+        }
+
+        function nextSlide() { if (bgImages.length) { currentIndex = (currentIndex + 1) % bgImages.length; updateHeroBackground(); } }
+        function prevSlide() { if (bgImages.length) { currentIndex = (currentIndex - 1 + bgImages.length) % bgImages.length; updateHeroBackground(); } }
+
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+        removeBtn.addEventListener('click', removeCurrentImage);
+        resetBtn.addEventListener('click', resetToDefaultHD);
+        uploadInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                addImagesFromFiles(e.target.files);
+                uploadInput.value = '';
+            }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { prevSlide(); e.preventDefault(); }
+            if (e.key === 'ArrowRight') { nextSlide(); e.preventDefault(); }
+        });
+
+        updateHeroBackground();
+    })();
+</script>
+
+<!-- Original product carousel script (unchanged) -->
+<script>
+    let slideIndex = 0;
+    let slides = document.getElementsByClassName("carousel-slide");
+    let dots = document.getElementsByClassName("dot");
+
+    function showSlides() {
+        if (slides.length === 0) return;
+        for (let i = 0; i < slides.length; i++) { slides[i].style.display = "none"; }
+        for (let i = 0; i < dots.length; i++) { dots[i].className = dots[i].className.replace(" active", ""); }
+        slides[slideIndex].style.display = "block";
+        if (dots[slideIndex]) dots[slideIndex].className += " active";
+        slideIndex++;
+        if (slideIndex >= slides.length) { slideIndex = 0; }
+        setTimeout(showSlides, 5000);
+    }
+    function changeSlide(n) {
+        slideIndex += n;
+        if (slideIndex >= slides.length) { slideIndex = 0; }
+        if (slideIndex < 0) { slideIndex = slides.length - 1; }
+        showSlidesManual();
+    }
+    function showSlidesManual() {
+        for (let i = 0; i < slides.length; i++) { slides[i].style.display = "none"; }
+        for (let i = 0; i < dots.length; i++) { dots[i].className = dots[i].className.replace(" active", ""); }
+        slides[slideIndex].style.display = "block";
+        if (dots[slideIndex]) dots[slideIndex].className += " active";
+    }
+    function currentSlide(n) {
+        slideIndex = n;
+        showSlidesManual();
+    }
+    if (slides.length > 0) { showSlides(); }
+</script>
+
+{% endblock %}

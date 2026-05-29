@@ -1,0 +1,101 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <div class="card-header">
+        <h2>User Management</h2>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Full Name</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Date Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.get_full_name|default:"-" }}</td>
+                    <td>
+                        {% if user.is_superuser %}
+                            <span style="color: #dc3545;">Super Admin</span>
+                        {% elif user.is_staff %}
+                            <span style="color: #ff9800;">Staff</span>
+                        {% else %}
+                            <span style="color: #4caf50;">Customer</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_active %}
+                            <span style="color: #4caf50;">Active</span>
+                        {% else %}
+                            <span style="color: #dc3545;">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.date_joined|date:"Y-m-d H:i" }}</td>
+                    <td class="actions">
+                        <a href="{% url 'custom_admin:user_detail' user.id %}" class="btn-icon edit" title="View Details">👁️</a>
+                        <button onclick="toggleUserStatus({{ user.id }}, '{{ user.username }}', {{ user.is_active|lower }})" class="btn-icon" title="Toggle Status">
+                            {% if user.is_active %}🔴{% else %}🟢{% endif %}
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Status Toggle Confirmation Modal -->
+<div id="statusModal" class="modal">
+    <div class="modal-content">
+        <h3>Confirm Status Change</h3>
+        <p>Are you sure you want to <span id="statusAction"></span> user "<span id="statusUserName"></span>"?</p>
+        <form id="statusForm" method="POST">
+            {% csrf_token %}
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeStatusModal()">Cancel</button>
+                <button type="submit" class="btn-primary">Confirm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleUserStatus(userId, userName, isActive) {
+    const action = isActive ? 'deactivate' : 'activate';
+    document.getElementById('statusAction').innerText = action;
+    document.getElementById('statusUserName').innerText = userName;
+    document.getElementById('statusForm').action = `/admin-panel/users/toggle-status/${userId}/`;
+    document.getElementById('statusModal').style.display = 'block';
+}
+
+function closeStatusModal() {
+    document.getElementById('statusModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const statusModal = document.getElementById('statusModal');
+    if (event.target == statusModal) {
+        statusModal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - SileCommunication{% endblock %}
+
+{% block content %}
+<h1>Your Shopping Cart</h1>
+{% if cart_items %}
+    <div class="card">
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td>{{ item.product.name }}</td>
+                    <td>${{ item.product.price }}</td>
+                    <td>
+                        <form action="/cart/update/{{ item.id }}/" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" style="width: 60px;">
+                            <button type="submit" class="btn">Update</button>
+                        </form>
+                    </td>
+                    <td>${{ item.total_price }}</td>
+                    <td><a href="/cart/remove/{{ item.id }}/" class="btn btn-danger">Remove</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3"><strong>Total:</strong></td>
+                    <td colspan="2"><strong>${{ total_price }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+        <div style="margin-top: 20px;">
+            <a href="/orders/checkout/" class="btn btn-primary">Proceed to Checkout</a>
+            <a href="/products" class="btn">Continue Shopping</a>
+        </div>
+    </div>
+{% else %}
+    <div class="card">
+        <p>Your cart is empty.</p>
+        <a href="/products" class="btn btn-primary">Start Shopping</a>
+    </div>
+{% endif %}
+{% endblock %}

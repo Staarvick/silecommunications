@@ -1,0 +1,67 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block title %}Manage Brands - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 style="color: #059669;">Manage Brands</h1>
+        <a href="{% url 'custom_admin:brand_add' %}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add New Brand
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr style="background: #059669; color: white;">
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for brand in brands %}
+                        <tr>
+                            <td><strong>{{ brand.name }}</strong></td>
+                            <td>{{ brand.slug }}</td>
+                            <td>{{ brand.description|truncatewords:10|default:"-" }}</td>
+                            <td>
+                                {% if brand.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button onclick="confirmDelete({{ brand.id }}, '{{ brand.name|escapejs }}')" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <p class="text-muted">No brands yet. <a href="{% url 'custom_admin:brand_add' %}">Add your first brand</a></p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(brandId, brandName) {
+    if (confirm('Are you sure you want to delete brand "' + brandName + '"?')) {
+        window.location.href = '/admin-panel/brands/delete/' + brandId + '/';
+    }
+}
+</script>
+{% endblock %}
