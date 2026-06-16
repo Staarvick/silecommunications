@@ -4,9 +4,14 @@ from django.db.models import Q
 from .models import Product, Category, Brand
 from django.core.paginator import Paginator
 
+from .models import Product, Category, Brand, CarouselImage  # Make sure CarouselImage is imported
+
 
 def home(request):
     """Home page view"""
+    # Get carousel images from database (admin controlled)
+    carousel_images = CarouselImage.objects.filter(is_active=True).order_by('order')
+
     # Get all active products
     all_products = Product.objects.filter(is_active=True)
 
@@ -30,20 +35,30 @@ def home(request):
     if not featured_products:
         featured_products = products[:8]
 
+    # Lipa Pole Pole products - FIXED FIELD NAME
+    lipa_pole_pole_products = all_products.filter(
+        is_lipa_pole_pole=True
+    )[:4]
+
+    # Fallback if no eligible products
+    if not lipa_pole_pole_products:
+        lipa_pole_pole_products = products[:4]
+
     categories = Category.objects.filter(is_active=True)[:6]
 
     context = {
         'carousel_products': carousel_products,
+        'carousel_images': carousel_images,  # ← ADD THIS LINE
         'phones': phones,
         'laptops': laptops,
         'solar_products': solar_products,
         'featured_products': featured_products,
         'products': products,
         'categories': categories,
+        'lipa_pole_pole_products': lipa_pole_pole_products,
     }
-    # CHANGE THIS LINE - remove 'products/' from the template path
-    return render(request, 'home.html', context)
 
+    return render(request, 'home.html', context)
 
 def shop(request):
     """Display all products in shop page"""
@@ -127,9 +142,31 @@ def about(request):
 def contact(request):
     return render(request, 'products/contact.html')
 
+
 def product_list(request):
     """Display all products"""
     products = Product.objects.all()
     return render(request, 'products/product_list.html', {'products': products})
 
 
+def test_images(request):
+    products = Product.objects.filter(is_active=True)[:10]
+    return render(request, 'products/test.html', {'products': products})
+
+
+def lipa_pole_pole_view(request):
+    """Display products available for Lipa Pole Pole"""
+    # Only show products marked as eligible - FIXED FIELD NAME
+    products_list = Product.objects.filter(
+        is_active=True,
+        is_lipa_pole_pole=True  # ← CHANGED THIS LINE
+    )
+
+    paginator = Paginator(products_list, 12)  # 12 products per page
+    page_number = request.GET.get('page')
+    products = paginator.get_page(page_number)
+
+    context = {
+        'products': products,
+    }
+    return render(request, 'products/lipa_pole_pole.html', context)

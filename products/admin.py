@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe  # <-- Add this import
+from django.utils.safestring import mark_safe
 from .models import Brand, Category, Product
 
 
@@ -26,12 +26,13 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
         'name', 'brand', 'category', 'price', 'compare_price',
-        'stock', 'stock_status', 'is_featured', 'is_active', 'stock_display'
+        'stock', 'stock_status', 'is_featured', 'is_active', 'is_lipa_pole_pole', 'stock_display'
     ]
-    list_filter = ['brand', 'category', 'stock_status', 'is_featured', 'is_active']
+    list_filter = ['brand', 'category', 'stock_status', 'is_featured', 'is_active', 'is_lipa_pole_pole']
     search_fields = ['name', 'sku', 'brand__name']
     prepopulated_fields = {'slug': ('name',)}
-    list_editable = ['price', 'compare_price', 'stock', 'stock_status', 'is_featured', 'is_active']
+    list_editable = ['price', 'compare_price', 'stock', 'stock_status', 'is_featured', 'is_active', 'is_lipa_pole_pole']
+    list_per_page = 25
 
     fieldsets = (
         ('Basic Information', {
@@ -54,8 +55,12 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('specifications',),
             'classes': ('collapse',)
         }),
-        ('Status', {
-            'fields': ('is_featured', 'is_active')
+        ('Features', {
+            'fields': ('is_featured', 'is_active', 'is_lipa_pole_pole')
+        }),
+        ('Installment Options', {
+            'fields': ('installment_months', 'installment_interest_rate'),
+            'classes': ('collapse',)
         }),
     )
 
@@ -68,3 +73,30 @@ class ProductAdmin(admin.ModelAdmin):
             return format_html('<span style="color: green;">In Stock ({})</span>', obj.stock)
 
     stock_display.short_description = 'Stock Status'
+
+
+from .models import CarouselImage
+
+from .models import CarouselImage
+
+
+@admin.register(CarouselImage)
+class CarouselImageAdmin(admin.ModelAdmin):
+    list_display = ['image_preview', 'order', 'is_active', 'created_at']
+    list_editable = ['order', 'is_active']
+    list_filter = ['is_active']
+    ordering = ['order']
+
+    fieldsets = (
+        ('Carousel Image', {
+            'fields': ('image', 'order', 'is_active', 'title'),
+            'description': 'Upload images for the right side carousel. Recommended size: 1920x1080'
+        }),
+    )
+
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-height: 50px; max-width: 100px;" />', obj.image.url)
+        return "No image"
+
+    image_preview.short_description = 'Preview'

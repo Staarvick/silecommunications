@@ -10,32 +10,121 @@ from django.utils.text import slugify
 from products.models import Product, Brand, Category
 from .decorators import custom_admin_required
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.utils.text import slugify
 
-# Dashboard view
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count, Sum, Q
+from orders.models import Order, OrderItem
+
+# Import your models
+from products.models import Product, Brand, Category
+from .decorators import custom_admin_required
+
+
+# Dashboard view - UPDATED WITH CHART DATA
 @login_required
 @custom_admin_required
 def dashboard(request):
-    """Admin dashboard home page"""
-    # Get recent categories
-    recent_categories = Category.objects.all().order_by('-created_at')[:10]
+    """Admin dashboard home page with statistics and charts"""
 
-    # Get counts for stats
+    # Get recent categories (limit to 5 for table)
+    recent_categories = Category.objects.all().order_by('-created_at')[:5]
+
+    # ========== BASIC STATS ==========
     total_products = Product.objects.count()
     total_brands = Brand.objects.count()
     total_categories = Category.objects.count()
     total_orders = Order.objects.count()
     pending_orders = Order.objects.filter(status='pending').count()
 
+    # Additional order status counts for pie chart
+    processing_orders = Order.objects.filter(status='processing').count()
+    completed_orders = Order.objects.filter(status='completed').count()
+    cancelled_orders = Order.objects.filter(status='cancelled').count()
+
+    # ========== SALES TREND (Last 7 Days) ==========
+    today = timezone.now().date()
+    sales_labels = []
+    sales_data = []
+
+    for i in range(6, -1, -1):
+        day = today - timedelta(days=i)
+        sales_labels.append(day.strftime('%b %d'))  # Format: "Jun 15"
+
+        # Sum of completed order amounts for this day
+        daily_sales = Order.objects.filter(
+            created_at__date=day,
+            status='completed'
+        ).aggregate(total=Sum('total_amount'))['total'] or 0
+        sales_data.append(float(daily_sales))
+
+    # ========== CATEGORY DISTRIBUTION ==========
+    # Count products per category
+    category_distribution = []
+    for category in Category.objects.filter(is_active=True):
+        product_count = Product.objects.filter(category=category, is_active=True).count()
+        if product_count > 0:
+            category_distribution.append({
+                'name': category.name,
+                'count': product_count
+            })
+
+    # If no categories have products, show sample data for demonstration
+    if not category_distribution:
+        category_labels = ['Phones', 'Accessories', 'Solar', 'Tablets', 'Laptops']
+        category_counts = [25, 12, 8, 6, 4]
+    else:
+        category_labels = [cat['name'] for cat in category_distribution]
+        category_counts = [cat['count'] for cat in category_distribution]
+
+    # ========== TOP 5 PRODUCTS ==========
+    top_products = OrderItem.objects.values('product__name', 'product__id').annotate(
+        total_sold=Sum('quantity')
+    ).order_by('-total_sold')[:5]
+
+    top_products_labels = []
+    top_products_data = []
+
+    for item in top_products:
+        name = item['product__name']
+        # Truncate long names
+        if len(name) > 20:
+            name = name[:17] + '...'
+        top_products_labels.append(name)
+        top_products_data.append(item['total_sold'] or 0)
+
+    # If no products sold yet, show sample data
+    if not top_products_labels:
+        top_products_labels = ['iPhone 15', 'Samsung S24', 'Power Bank', 'Solar Panel', 'AirPods']
+        top_products_data = [45, 38, 30, 22, 18]
+
     context = {
         'title': 'Dashboard',
         'recent_categories': recent_categories,
+        # Basic stats
         'total_products': total_products,
         'total_brands': total_brands,
         'total_categories': total_categories,
         'total_orders': total_orders,
         'pending_orders': pending_orders,
+        'processing_orders': processing_orders,
+        'completed_orders': completed_orders,
+        'cancelled_orders': cancelled_orders,
+        # Chart data
+        'sales_labels': sales_labels,
+        'sales_data': sales_data,
+        'category_labels': category_labels,
+        'category_counts': category_counts,
+        'top_products_labels': top_products_labels,
+        'top_products_data': top_products_data,
     }
     return render(request, 'custom_admin/dashboard.html', context)
+
+
 
 
 # Product Management Views

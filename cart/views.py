@@ -126,3 +126,5 @@ def cart_count(request):
     count = cart.total_quantity
     return JsonResponse({'count': count})
 
+
+

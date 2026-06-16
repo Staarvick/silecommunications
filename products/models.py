@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 import uuid
 import time
 
@@ -49,7 +50,7 @@ class Product(models.Model):
     # Basic Info
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
-    sku = models.CharField(max_length=50, unique=True, blank=True, null=True)  # Add null=True
+    sku = models.CharField(max_length=50, unique=True, blank=True, null=True)
 
     # Relationships
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='products')
@@ -79,6 +80,27 @@ class Product(models.Model):
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+    # Installment options
+    installment_months = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Available installment months (e.g., [3, 6, 12]). Leave empty for default [3, 6, 12]"
+    )
+    installment_interest_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0.00,
+        blank=True,
+        help_text="Interest rate for installments (0% = no interest)"
+    )
+
+    # Lipa Pole Pole field - this is the correct field name
+    is_lipa_pole_pole = models.BooleanField(
+        default=False,
+        verbose_name="Lipa Pole Pole Eligible",
+        help_text="Check this box to show product in Lipa Mdogo Mdogo section."
+    )
+
     # Stock Status Options
     STOCK_STATUS = [
         ('in_stock', 'In Stock'),
@@ -98,10 +120,28 @@ class Product(models.Model):
             models.Index(fields=['brand', 'is_active']),
             models.Index(fields=['category', 'is_active']),
             models.Index(fields=['is_in_stock']),
+            models.Index(fields=['is_lipa_pole_pole', 'is_active']),  # Fixed field name
         ]
 
-    def __str__(self):
-        return f"{self.brand.name} {self.name}"
+    # Helper methods for installments
+    def get_installment_price(self, months=3):
+        """Calculate monthly installment price"""
+        if not self.is_lipa_pole_pole:  # Fixed field name
+            return None
+
+        # Apply interest if any
+        if self.installment_interest_rate > 0:
+            total = float(self.price) * (1 + float(self.installment_interest_rate) / 100)
+        else:
+            total = float(self.price)
+
+        return round(total / months, 2)
+
+    def get_available_installment_plans(self):
+        """Return available installment plans"""
+        if self.installment_months:
+            return sorted(self.installment_months)
+        return [3, 6, 12]  # Default plans
 
     def get_discount_percentage(self):
         if self.compare_price and self.compare_price > self.price:
@@ -110,6 +150,9 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('products:product_detail', args=[self.category.slug, self.brand.slug, self.slug])
+
+    def __str__(self):
+        return f"{self.brand.name} {self.name}"
 
     def save(self, *args, **kwargs):
         # Auto-generate slug if not provided (for new products)
@@ -127,7 +170,7 @@ class Product(models.Model):
             # Generate a unique SKU
             # Format: CATEGORY CODE + TIMESTAMP + RANDOM
             category_code = self.category.name[:3].upper() if self.category else 'PRD'
-            timestamp = str(int(__import__('time').time()))[-6:]
+            timestamp = str(int(time.time()))[-6:]
             random_part = str(uuid.uuid4())[:4].upper()
             self.sku = f"{category_code}-{timestamp}-{random_part}"
 
@@ -148,3 +191,19 @@ class Product(models.Model):
         super().save(*args, **kwargs)
 
 
+class CarouselImage(models.Model):
+    """Hero carousel images for the right side of split hero"""
+    title = models.CharField(max_length=200, blank=True, help_text="Optional title (not displayed in current design)")
+    image = models.ImageField(upload_to='carousel/',
+                              help_text="Upload carousel slide image (recommended size: 1920x1080)")
+    order = models.IntegerField(default=0, help_text="Lower numbers appear first")
+    is_active = models.BooleanField(default=True, help_text="Show this slide in carousel")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+        verbose_name = "Carousel Image"
+        verbose_name_plural = "Carousel Images"
+
+    def __str__(self):
+        return f"Slide {self.order} - {self.title or 'Image'}"

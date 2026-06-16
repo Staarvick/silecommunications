@@ -3,9 +3,252 @@
 
 {% block title %}Sile Communications Ltd - Safaricom Partner{% endblock %}
 
+{% block extra_css %}
+<style>
+    :root {
+        --safaricom: #00a650;
+        --safaricom-dark: #008c44;
+        --safaricom-soft: rgba(0, 166, 80, 0.1);
+    }
+
+    .bg-safaricom { background-color: var(--safaricom) !important; }
+    .bg-safaricom-soft { background-color: var(--safaricom-soft) !important; }
+    .text-safaricom { color: var(--safaricom) !important; }
+
+    .btn-safaricom {
+        background-color: var(--safaricom);
+        border-color: var(--safaricom);
+        color: white;
+    }
+    .btn-safaricom:hover {
+        background-color: var(--safaricom-dark);
+        color: white;
+    }
+
+    .safaricom-hr {
+        background-color: var(--safaricom);
+        width: 80px;
+        height: 3px;
+        opacity: 1;
+    }
+
+    .split-hero {
+        display: flex;
+        width: 100%;
+        min-height: 500px;
+        margin-bottom: 2rem;
+    }
+
+    .split-left {
+        flex: 1;
+        background: linear-gradient(135deg, #006b36 0%, var(--safaricom) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        padding: 2rem;
+    }
+
+    .split-right {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-carocell {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
+        overflow: hidden;
+    }
+
+    .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+    }
+
+    .dropping-words {
+        margin-bottom: 1.5rem;
+    }
+
+    .word {
+        display: inline-block;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        opacity: 0;
+        transform: translateY(-100px);
+        animation: dropFromSky 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    }
+
+    .word:nth-child(1) { animation-delay: 0.0s; }
+    .word:nth-child(2) { animation-delay: 0.2s; }
+    .word:nth-child(3) { animation-delay: 0.4s; }
+    .word:nth-child(4) { animation-delay: 0.5s; }
+    .word:nth-child(5) { animation-delay: 0.7s; }
+    .word:nth-child(6) { animation-delay: 0.9s; }
+    .word:nth-child(7) { animation-delay: 1.1s; }
+    .word:nth-child(8) { animation-delay: 1.3s; }
+
+    @keyframes dropFromSky {
+        0% {
+            opacity: 0;
+            transform: translateY(-200px) rotate(-10deg);
+        }
+        70% {
+            opacity: 1;
+            transform: translateY(10px) rotate(2deg);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) rotate(0);
+        }
+    }
+
+    .hover-lift {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    /* Ensure carousel images cover properly */
+.hero-bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+
+    /* Lipa Pole Pole Section Styles */
+    .lipa-badge {
+        background: linear-gradient(135deg, #f5a623, #f7c948);
+        color: #333;
+    }
+
+/* Floating animations for Lipa Pole Pole section - FULL BACKGROUND */
+.lipa-section {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.floating-device {
+    position: absolute;
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Spread devices across the ENTIRE section */
+.float-1 { top: 5%; left: 0%; width: 180px; animation: floatAround 8s ease-in-out infinite; }
+.float-2 { top: 15%; right: 0%; width: 200px; animation: floatAround 10s ease-in-out infinite 1s; }
+.float-3 { top: 30%; left: 5%; width: 150px; animation: floatAround 7s ease-in-out infinite 2s; }
+.float-4 { top: 45%; right: 5%; width: 170px; animation: floatAround 9s ease-in-out infinite 0.5s; }
+.float-5 { top: 55%; left: 10%; width: 160px; animation: floatAround 11s ease-in-out infinite 1.5s; }
+.float-6 { top: 70%; right: 8%; width: 190px; animation: floatAround 8s ease-in-out infinite 3s; }
+.float-7 { top: 85%; left: 3%; width: 140px; animation: floatAround 12s ease-in-out infinite 2.5s; }
+.float-8 { top: 10%; left: 30%; width: 130px; animation: floatAround 6s ease-in-out infinite 4s; }
+.float-9 { top: 60%; right: 25%; width: 150px; animation: floatAround 9s ease-in-out infinite 0.8s; }
+.float-10 { top: 80%; right: 40%; width: 120px; animation: floatAround 7s ease-in-out infinite 3.5s; }
+
+@keyframes floatAround {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.12;
+    }
+    25% {
+        transform: translateY(-20px) rotate(5deg);
+        opacity: 0.18;
+    }
+    50% {
+        transform: translateY(-35px) rotate(-3deg);
+        opacity: 0.22;
+    }
+    75% {
+        transform: translateY(-15px) rotate(3deg);
+        opacity: 0.15;
+    }
+}
+
+    .view-all-btn {
+        background: transparent;
+        border: 2px solid var(--safaricom);
+        color: var(--safaricom);
+        transition: all 0.3s;
+    }
+
+    .view-all-btn:hover {
+        background: var(--safaricom);
+        color: white;
+        transform: translateX(5px);
+    }
+
+    .lipa-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    /* For a denser pattern, use this instead of individual images */
+    .lipa-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100'),
+                      url('https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=100'),
+                      url('https://images.pexels.com/photos/18105/pexels-photo.jpg?w=100');
+    background-repeat: repeat;
+    background-size: 150px;
+    background-position: 10% 10%, 80% 20%, 40% 70%;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+    animation: slowFloat 20s linear infinite;
+}
+
+@keyframes slowFloat {
+    0% { background-position: 10% 10%, 80% 20%, 40% 70%; }
+    100% { background-position: 15% 15%, 75% 25%, 45% 65%; }
+}
+
+    .hover-lift {
+        background: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+
+    @media (max-width: 768px) {
+        .split-hero {
+            flex-direction: column;
+        }
+        .split-left, .split-right {
+            min-height: 400px;
+        }
+        .word {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<!-- SPLIT-SCREEN HERO: Left animated text + Right carousel -->
+<!-- SPLIT-SCREEN HERO: Left animated text + Right carousel (Admin Controlled) -->
 <div class="split-hero">
     <div class="split-left">
         <div class="static-content">
@@ -35,7 +278,6 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold">🔥 Featured Products</h2>
-
         </div>
         <div class="row g-4 mb-5">
             {% for product in featured_products %}
@@ -57,7 +299,7 @@
             </div>
             {% empty %}
             <div class="col-12 text-center">
-                <p class="text-muted">No products available yet.</p>
+                <p class="text-muted">No featured products available yet.</p>
             </div>
             {% endfor %}
         </div>
@@ -88,6 +330,72 @@
             {% empty %}
             <div class="col-12 text-center">
                 <p class="text-muted">No products available yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- LIPA POLE POLE SECTION with floating devices covering entire background -->
+<section class="py-5 lipa-section">
+    <!-- Floating Device Images - Spread across entire section -->
+    <!-- Left side -->
+    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200" class="floating-device float-1" alt="Phone">
+    <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=180" class="floating-device float-3" alt="Phone">
+    <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=190" class="floating-device float-5" alt="Phone">
+    <img src="https://images.unsplash.com/photo-1610792519655-7961f9675bb9?w=170" class="floating-device float-7" alt="Phone">
+
+    <!-- Right side -->
+    <img src="https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=220" class="floating-device float-2" alt="Phone">
+    <img src="https://images.pexels.com/photos/18105/pexels-photo.jpg?w=200" class="floating-device float-4" alt="Laptop">
+    <img src="https://images.pexels.com/photos/404280/pexels-photo-404280.jpeg?w=210" class="floating-device float-6" alt="Laptop">
+
+    <!-- Middle area -->
+    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=150" class="floating-device float-8" alt="Laptop">
+    <img src="https://images.unsplash.com/photo-1580910051074-3e47e2e5dc72?w=160" class="floating-device float-9" alt="Phone">
+    <img src="https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=140" class="floating-device float-10" alt="Laptop">
+
+    <!-- Content Overlay -->
+    <div class="container position-relative" style="z-index: 1;">
+        <!-- Your existing Lipa Pole Pole content here -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+            <div>
+                <span class="badge lipa-badge mb-2 px-3 py-2 fs-6">
+                    <i class="bi bi-credit-card-2-front me-1"></i> Buy Now, Pay Later
+                </span>
+                <h2 class="fw-bold mt-2">💰 Lipa Pole Pole Products</h2>
+                <p class="text-muted">Affordable installments with flexible payment plans</p>
+            </div>
+            <a href="{% url 'products:lipa_pole_pole' %}" class="btn view-all-btn rounded-pill px-4">
+                View All Lipa Pole Pole <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for product in lipa_pole_pole_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    {% if product.main_image and product.main_image.url %}
+                    <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: contain; padding: 10px;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted">{{ product.short_description|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="h5 mb-0 text-safaricom">KSh {{ product.price }}</span>
+                            <small class="text-success">Flexible payment</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3">
+                        <a href="{% url 'products:product_detail' product.category.slug product.brand.slug product.slug %}" class="btn btn-safaricom w-100 rounded-pill">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No Lipa Pole Pole products available at the moment.
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -247,154 +555,40 @@
     </div>
 </section>
 
-<style>
-    :root {
-        --safaricom: #00a650;
-        --safaricom-dark: #008c44;
-        --safaricom-soft: rgba(0, 166, 80, 0.1);
-    }
-    .bg-safaricom { background-color: var(--safaricom) !important; }
-    .bg-safaricom-soft { background-color: var(--safaricom-soft) !important; }
-    .text-safaricom { color: var(--safaricom) !important; }
-    .btn-safaricom {
-        background-color: var(--safaricom);
-        border-color: var(--safaricom);
-        color: white;
-    }
-    .btn-safaricom:hover {
-        background-color: var(--safaricom-dark);
-        color: white;
-    }
-    .btn-outline-safaricom {
-        border-color: var(--safaricom);
-        color: var(--safaricom);
-    }
-    .btn-outline-safaricom:hover {
-        background-color: var(--safaricom);
-        color: white;
-    }
-    .safaricom-hr {
-        background-color: var(--safaricom);
-        width: 80px;
-        height: 3px;
-        opacity: 1;
-    }
-    .split-hero {
-        display: flex;
-        width: 100%;
-        min-height: 500px;
-    }
-    .split-left {
-        flex: 1;
-        background: linear-gradient(135deg, #006b36 0%, var(--safaricom) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        padding: 2rem;
-    }
-    .split-right {
-        flex: 1;
-        position: relative;
-        overflow: hidden;
-    }
-    .hero-carocell {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        min-height: 500px;
-        overflow: hidden;
-    }
-    .hero-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-    }
-    .dropping-words { margin-bottom: 1.5rem; }
-    .word {
-        display: inline-block;
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-        opacity: 0;
-        transform: translateY(-100px);
-        animation: dropFromSky 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    }
-    .word:nth-child(1) { animation-delay: 0.0s; }
-    .word:nth-child(2) { animation-delay: 0.2s; }
-    .word:nth-child(3) { animation-delay: 0.4s; }
-    .word:nth-child(4) { animation-delay: 0.5s; }
-    .word:nth-child(5) { animation-delay: 0.7s; }
-    .word:nth-child(6) { animation-delay: 0.9s; }
-    .word:nth-child(7) { animation-delay: 1.1s; }
-    .word:nth-child(8) { animation-delay: 1.3s; }
-    @keyframes dropFromSky {
-        0% {
-            opacity: 0;
-            transform: translateY(-200px) rotate(-10deg);
-        }
-        70% {
-            opacity: 1;
-            transform: translateY(10px) rotate(2deg);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0) rotate(0);
-        }
-    }
-    .hover-lift {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .hover-lift:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-    }
-    @media (max-width: 768px) {
-        .split-hero { flex-direction: column; }
-        .split-left, .split-right { min-height: 400px; }
-        .word { font-size: 1.5rem; }
+{% endblock %}
 
-    }
-
-    <style>
-    /* Force images to be visible for debugging */
-    img {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        min-height: 50px !important;
-        min-width: 50px !important;
-        border: 2px solid red !important;
-    }
-</style>
-
-
-
-</style>
-
+{% block extra_js %}
 <script>
     (function() {
+        // Get images from Django (database) - these are your admin uploaded images
         const images = [
-            "https://images.pexels.com/photos/47261/pexels-photo-47261.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080",
-            "https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1920&h=1080",
-            "https://images.pexels.com/photos/404280/pexels-photo-404280.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080",
-            "https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080"
+            {% for image in carousel_images %}
+                "{{ image.image.url }}"{% if not forloop.last %},{% endif %}
+            {% endfor %}
         ];
+
         let currentIndex = 0;
         let isTransitioning = false;
         let autoInterval = null;
         const heroBg = document.getElementById('heroBg');
+
+        if (!heroBg) return;
+
+        // If no images in database, show error or use fallback
+        if (images.length === 0) {
+            console.warn('No carousel images found in database. Please add images in admin panel.');
+            heroBg.style.backgroundColor = '#00a650';
+            return;
+        }
+
         function changeSlide(index) {
             if (isTransitioning) return;
+            if (!images.length) return;
+
             isTransitioning = true;
-            const newImage = images[index];
+            const newImage = images[index % images.length];
             if (!newImage) return;
+
             heroBg.classList.add('swallow');
             setTimeout(() => {
                 heroBg.style.backgroundImage = `url('${newImage}')`;
@@ -406,18 +600,26 @@
                 }, 500);
             }, 500);
         }
+
         function nextSlide() {
             if (isTransitioning) return;
+            if (!images.length) return;
             currentIndex = (currentIndex + 1) % images.length;
             changeSlide(currentIndex);
         }
+
         function startAutoRotate() {
             if (autoInterval) clearInterval(autoInterval);
-            autoInterval = setInterval(nextSlide, 5000);
+            if (images.length > 1) {
+                autoInterval = setInterval(nextSlide, 5000);
+            }
         }
-        heroBg.style.backgroundImage = `url('${images[0]}')`;
-        startAutoRotate();
+
+        // Set initial image
+        if (images.length > 0) {
+            heroBg.style.backgroundImage = `url('${images[0]}')`;
+            startAutoRotate();
+        }
     })();
 </script>
-
 {% endblock %}
