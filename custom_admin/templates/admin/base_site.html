@@ -1,0 +1,8 @@
+{# This overrides Django's default base_site.html #}
+{% extends "admin/base.html" %}
+
+{% block title %}SiteCommunications Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">SiteCommunications Administration</a></h1>
+{% endblock %}

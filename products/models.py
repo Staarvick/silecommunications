@@ -149,7 +149,9 @@ class Product(models.Model):
         return 0
 
     def get_absolute_url(self):
-        return reverse('products:product_detail', args=[self.category.slug, self.brand.slug, self.slug])
+        if self.category and self.brand and self.slug:
+            return reverse('products:product_detail', args=[self.category.slug, self.brand.slug, self.slug])
+        return '#'  # Return a safe fallback
 
     def __str__(self):
         return f"{self.brand.name} {self.name}"
