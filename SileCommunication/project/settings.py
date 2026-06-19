@@ -40,17 +40,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # Only add whitenoise if it's installed
-]
-
-# Try to add whitenoise if available
-try:
-    import whitenoise
-    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-except ImportError:
-    pass
-
-MIDDLEWARE += [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,27 +72,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'SileCommunication.project.wsgi.application'
 
-# Database
-# Use PostgreSQL if DATABASE_URL is set, otherwise use SQLite
-try:
-    import dj_database_url
-    if os.environ.get('DATABASE_URL'):
-        DATABASES = {
-            'default': dj_database_url.config(
-                default=os.environ.get('DATABASE_URL'),
-                conn_max_age=600,
-                ssl_require=True
-            )
-        }
-    else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-except ImportError:
-    # If dj_database_url is not installed, use SQLite
+# Database - Automatically switches between SQLite and PostgreSQL
+import dj_database_url
+
+if os.environ.get('DATABASE_URL'):
+    # Production - PostgreSQL on Render
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
+else:
+    # Development - SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -146,16 +129,12 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Static files storage for production
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Try to use whitenoise for static files in production
-try:
-    import whitenoise
-    if not DEBUG:
-        STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-except ImportError:
-    pass
 
 # Security settings for production
 if not DEBUG:
