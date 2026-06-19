@@ -35,3 +35,4 @@ staticfiles/
 
 # Render
 render.yaml
+db.sqlite3
