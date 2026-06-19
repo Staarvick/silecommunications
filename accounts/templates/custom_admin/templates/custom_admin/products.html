@@ -1,0 +1,82 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block title %}Manage Products - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 style="color: #059669;">Manage Products</h1>
+        <a href="{% url 'custom_admin:product_add' %}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add New Product
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr style="background: #059669; color: white;">
+                            <th>Name</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td><strong>{{ product.name }}</strong></td>
+                            <td>{{ product.brand.name|default:"-" }}</td>
+                            <td>{{ product.category.name|default:"-" }}</td>
+                            <td>KSh {{ product.price }}</td>
+                            <td>
+                                {% if product.stock <= 0 %}
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                {% elif product.stock <= 5 %}
+                                    <span class="badge bg-warning">{{ product.stock }} left</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ product.stock }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if product.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'custom_admin:product_edit' product.id %}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <button onclick="confirmDelete({{ product.id }}, '{{ product.name|escapejs }}')" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <p class="text-muted">No products yet. <a href="{% url 'custom_admin:product_add' %}">Add your first product</a></p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(productId, productName) {
+    if (confirm('Are you sure you want to delete "' + productName + '"?')) {
+        window.location.href = '/admin-panel/products/delete/' + productId + '/';
+    }
+}
+</script>
+{% endblock %}

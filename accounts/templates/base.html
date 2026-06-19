@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sile Communications{% endblock %}</title>
+
+    <!-- Google Fonts (ShopWise style) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Roboto:wght@100;300;400;500;700;900&family=Quicksand:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Custom frontend styling (matches ShopWise aesthetic) -->
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-dark: #047857;
+            --secondary: #6c757d;
+            --success: #198754;
+            --danger: #dc3545;
+            --light-bg: #f4f6f9;
+        }
+
+        body {
+            font-family: 'Inter', 'Open Sans', sans-serif;
+            background-color: #ffffff;
+            color: #1f2937;
+        }
+
+        /* Navbar */
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary), #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #4b5563;
+            transition: 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+
+        /* Hero / category header */
+        .page-header {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            padding: 2rem 0;
+            border-radius: 0 0 2rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Product cards */
+        .product-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            border-radius: 1.25rem;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -12px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            border-top-left-radius: 1.25rem;
+            border-top-right-radius: 1.25rem;
+            padding: 1rem;
+            background: #f9fafb;
+            height: 200px;
+            object-fit: contain;
+        }
+        .btn-outline-success {
+            border-radius: 40px;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline-success:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111827;
+            color: #9ca3af;
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+        }
+        footer a {
+            color: #d1d5db;
+            text-decoration: none;
+        }
+        footer a:hover {
+            color: white;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+        }
+        .breadcrumb-item a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Top header (ShopWise style) -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'products:home' %}">
+                <i class="bi bi-shop"></i> SileCommunications
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'products:home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'products:shop' %}">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'products:about' %}">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'products:contact' %}">Contact</a></li>
+                </ul>
+                <div class="d-flex">
+                    <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-secondary position-relative me-2">
+                        <i class="bi bi-cart"></i> Cart
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">0</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-light dropdown-toggle rounded-pill" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">My Account</a></li>
+                                <li><a class="dropdown-item" href="#">Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'accounts:logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="btn btn-primary rounded-pill">Sign In</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header (optional) -->
+    {% block page_header %}
+    <div class="page-header text-center">
+        <div class="container">
+
+            {% block header_subtitle %}{% endblock %}
+        </div>
+    </div>
+    {% endblock %}
+
+    <!-- Main content -->
+    <main class="container py-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5 class="text-white">Sile Communications</h5>
+                    <p>Your trusted partner for quality electronics and communication solutions.</p>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <h6 class="text-white">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'products:shop' %}">Shop</a></li>
+                        <li><a href="{% url 'products:about' %}">About Us</a></li>
+                        <li><a href="{% url 'products:contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h6 class="text-white">Customer Service</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Returns</a></li>
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h6 class="text-white">Follow Us</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="#"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="#"><i class="bi bi-instagram fs-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-secondary">
+            <div class="text-center small">
+                &copy; {% now "Y" %} Sile Communications. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>c

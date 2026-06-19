@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Sile Communications{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-safaricom text-white">
+                    <h4 class="mb-0">Login to Your Account</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" name="username" id="id_username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Password</label>
+                            <input type="password" name="password" id="id_password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-safaricom w-100">Login</button>
+                    </form>
+                    <hr>
+                    <p class="text-center mb-0">
+                        Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

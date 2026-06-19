@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Sile Communications{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">About Us</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 fw-bold mb-4">About Sile Communications</h1>
+            <p class="lead text-muted">Your trusted partner in communication and technology solutions.</p>
+        </div>
+    </div>
+
+    <div class="row mt-5 g-4">
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+                    <i class="bi bi-shop fs-1 text-success mb-3 d-block"></i>
+                    <h3 class="h4 fw-semibold">Our Story</h3>
+                    <p>Founded in 2020, Sile Communications has grown from a small electronics retailer into a leading provider of quality communication devices, laptops, and solar solutions. We pride ourselves on offering authentic products at competitive prices with exceptional customer service.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+                    <i class="bi bi-eye fs-1 text-success mb-3 d-block"></i>
+                    <h3 class="h4 fw-semibold">Our Mission</h3>
+                    <p>To empower individuals and businesses through accessible, reliable technology. We bridge the digital divide by providing high‑quality products and expert guidance, ensuring every customer finds the right solution for their needs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="bg-light p-4 rounded-4">
+                <h3 class="fw-semibold mb-3 text-center">Why Choose Us?</h3>
+                <div class="row g-4 text-center">
+                    <div class="col-sm-4">
+                        <i class="bi bi-truck fs-1 text-success"></i>
+                        <p class="mt-2 fw-bold">Fast Delivery</p>
+                        <small class="text-muted">Nationwide shipping within 2-3 days</small>
+                    </div>
+                    <div class="col-sm-4">
+                        <i class="bi bi-shield-check fs-1 text-success"></i>
+                        <p class="mt-2 fw-bold">Authentic Products</p>
+                        <small class="text-muted">100% genuine with warranty</small>
+                    </div>
+                    <div class="col-sm-4">
+                        <i class="bi bi-headset fs-1 text-success"></i>
+                        <p class="mt-2 fw-bold">24/7 Support</p>
+                        <small class="text-muted">Dedicated customer care</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

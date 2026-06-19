@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %} - Sile Communications</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --safaricom: #00a650;
+            --safaricom-dark: #008c44;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: var(--safaricom);
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+        }
+
+        /* Navbar */
+        .admin-navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Cards */
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Buttons */
+        .btn-safaricom {
+            background-color: var(--safaricom);
+            border-color: var(--safaricom);
+            color: white;
+        }
+
+        .btn-safaricom:hover {
+            background-color: var(--safaricom-dark);
+            border-color: var(--safaricom-dark);
+            color: white;
+        }
+
+        /* Table */
+        .admin-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .admin-table thead {
+            background-color: #f8f9fa;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0">
+                <div class="sidebar p-3">
+                    <div class="text-center mb-4">
+                        <h4 class="fw-bold">Sile Comm</h4>
+                        <small class="text-muted">Admin Panel</small>
+                    </div>
+                    <hr class="bg-light">
+                    <nav class="nav flex-column">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                           href="{% url 'custom_admin:dashboard' %}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                        <a class="nav-link {% if 'products' in request.path %}active{% endif %}"
+                           href="{% url 'custom_admin:product_list' %}">
+                            <i class="bi bi-box-seam"></i> Products
+                        </a>
+                        <a class="nav-link {% if 'categories' in request.path %}active{% endif %}"
+                           href="{% url 'custom_admin:category_list' %}">
+                            <i class="bi bi-tags"></i> Categories
+                        </a>
+                        <a class="nav-link {% if 'brands' in request.path %}active{% endif %}"
+                           href="{% url 'custom_admin:brand_list' %}">
+                            <i class="bi bi-building"></i> Brands
+                        </a>
+                        <a class="nav-link {% if 'orders' in request.path %}active{% endif %}"
+                           href="{% url 'custom_admin:order_list' %}">
+                            <i class="bi bi-cart-check"></i> Orders
+                        </a>
+                        <a class="nav-link {% if 'users' in request.path %}active{% endif %}"
+                           href="{% url 'custom_admin:user_list' %}">
+                            <i class="bi bi-people"></i> Users
+                        </a>
+                    </nav>
+                    <hr class="bg-light">
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="/static">
+                            <i class="bi bi-globe"></i> View Site
+                        </a>
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-0">
+                <div class="main-content">
+                    <!-- Top Navbar -->
+                    <div class="admin-navbar d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">{% block page_title %}Dashboard{% endblock %}</h5>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="me-3">
+                                <i class="bi bi-person-circle"></i>
+                                {{ request.user.username }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Content -->
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

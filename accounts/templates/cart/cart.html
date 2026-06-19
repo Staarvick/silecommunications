@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}My Cart - Sile Communications{% endblock %}
+
+{% block content %}
+<h1>Shopping Cart</h1>
+
+{% if cart_items %}
+    <div class="cart-container">
+        <table class="cart-table">
+            <!-- Cart table content -->
+        </table>
+
+        <div class="cart-actions">
+            <a href="{% url 'products:shop' %}" class="btn btn-secondary">Continue Shopping</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'orders:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+            {% else %}
+                <div class="login-prompt" style="text-align: center; margin-top: 20px; padding: 20px; background: #e8f5e9; border-radius: 8px;">
+                    <p>Already have an account? <a href="{% url 'accounts:login' %}?next={% url 'orders:checkout' %}">Login to checkout</a></p>
+                    <p>New customer? <a href="{% url 'accounts:register' %}?next={% url 'orders:checkout' %}">Create an account</a> for faster checkout</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">You can continue shopping and login when you're ready to order.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends '../admin_base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1>Welcome, {{ user.username }}</h1>
+
+<h2>Dashboard Overview</h2>
+
+<div style="display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
+    <div>
+        <strong>Total Products:</strong> {{ total_products }}
+    </div>
+    <div>
+        <strong>Categories:</strong> {{ total_categories }}
+    </div>
+    <div>
+        <strong>Brands:</strong> {{ total_brands }}
+    </div>
+    <div>
+        <strong>Total Users:</strong> {{ total_users }}
+    </div>
+</div>
+
+<hr>
+
+<h3>Low Stock Products</h3>
+{% if low_stock_products %}
+    <ul>
+    {% for product in low_stock_products %}
+        <li>{{ product.name }} - Only {{ product.stock }} left</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>All products have sufficient stock ?</p>
+{% endif %}
+
+<hr>
+
+<h3>Recent Products</h3>
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="text-align: left; padding: 8px;">Product</th>
+            <th style="text-align: left; padding: 8px;">Price</th>
+            <th style="text-align: left; padding: 8px;">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in recent_products %}
+        <tr>
+            <td style="padding: 8px;">{{ product.name }}</td>
+            <td style="padding: 8px;">KSh {{ product.price }}</td>
+            <td style="padding: 8px;">{% if product.is_active %}Active{% else %}Inactive{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3" style="padding: 8px;">No products yet</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<h3>Quick Actions</h3>
+<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <a href="{% url 'custom_admin:product_add' %}" class="btn btn-primary">Add Product</a>
+    <a href="{% url 'custom_admin:category_add' %}" class="btn btn-secondary">Add Category</a>
+    <a href="{% url 'custom_admin:brand_add' %}" class="btn btn-secondary">Add Brand</a>
+    <a href="/static" class="btn btn-secondary">View Store</a>
+</div>
+{% endblock %}

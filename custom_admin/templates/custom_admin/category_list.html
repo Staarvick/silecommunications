@@ -1,0 +1,81 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <div class="card-header">
+        <h2>Categories</h2>
+        <a href="{% url 'custom_admin:category_add' %}" class="btn-primary">+ Add Category</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Description</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>{{ category.id }}</td>
+                    <td>{{ category.name }}</a></td>
+                    <td>{{ category.slug|default:"-" }}</a></td>
+                    <td>{{ category.description|truncatewords:10|default:"-" }}</a></td>
+                    <td>{{ category.created_at|date:"Y-m-d" }}</a></td>
+                    <td class="actions">
+                        <a href="{% url 'custom_admin:category_edit' category.id %}" class="btn-icon edit" title="Edit">✏️</a>
+                        <button onclick="confirmDelete('category', {{ category.id }}, '{{ category.name }}')" class="btn-icon delete" title="Delete">🗑️</button>
+                    </a>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No categories found.</a>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>Confirm Delete</h3>
+        <p>Are you sure you want to delete category "<span id="deleteItemName"></span>"?</p>
+        <p class="warning">This action cannot be undone!</p>
+        <form id="deleteForm" method="POST">
+            {% csrf_token %}
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function confirmDelete(itemType, itemId, itemName) {
+    document.getElementById('deleteItemName').innerText = itemName;
+    document.getElementById('deleteForm').action = '/admin-panel/' + itemType + 's/delete/' + itemId + '/';
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

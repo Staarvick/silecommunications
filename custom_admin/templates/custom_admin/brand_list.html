@@ -1,0 +1,78 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Brands{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <div class="card-header">
+        <h2>Brands</h2>
+        <a href="{% url 'custom_admin:brand_add' %}" class="btn-primary">+ Add Brand</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for brand in brands %}
+                <tr>
+                    <td>{{ brand.id }}</a></td>
+                    <td>{{ brand.name }}</a></a></td>
+                    <td>{{ brand.slug|default:"-" }}</a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a> </td>
+                    <td class="actions">
+                        <a href="{% url 'custom_admin:brand_edit' brand.id %}" class="btn-icon edit" title="Edit">✏️</a>
+                        <button onclick="confirmDelete('brand', {{ brand.id }}, '{{ brand.name }}')" class="btn-icon delete" title="Delete">🗑️</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No brands found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>Confirm Delete</h3>
+        <p>Are you sure you want to delete brand "<span id="deleteItemName"></span>"?</p>
+        <p class="warning">This action cannot be undone!</p>
+        <form id="deleteForm" method="POST">
+            {% csrf_token %}
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function confirmDelete(itemType, itemId, itemName) {
+    document.getElementById('deleteItemName').innerText = itemName;
+    document.getElementById('deleteForm').action = '/admin-panel/' + itemType + 's/delete/' + itemId + '/';
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

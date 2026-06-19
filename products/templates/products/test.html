@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Image Test</title></head>
+<body>
+    <h1>Testing Product Images</h1>
+    {% for product in products %}
+    <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+        <h3>{{ product.name }}</h3>
+        <p>Image field exists: {{ product.image|yesno:"Yes,No" }}</p>
+        {% if product.image %}
+            <p>Raw URL: {{ product.image.url }}</p>
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 200px; border:1px solid red;">
+        {% else %}
+            <p style="color:red">⚠️ NO IMAGE UPLOADED FOR THIS PRODUCT</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</body>
+</html>

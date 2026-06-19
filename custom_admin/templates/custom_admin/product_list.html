@@ -1,0 +1,40 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Manage Products{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>Manage Products</h1>
+    <a href="{% url 'custom_admin:product_add' %}" class="btn btn-primary">+ Add New Product</a>
+</div>
+
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 10px;">{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.brand.name }}</td>
+            <td>{{ product.category.name }}</td>
+            <td>KSh {{ product.price }}</td>
+            <td>{{ product.stock }}</td>
+            <td>
+                <a href="{% url 'custom_admin:product_edit' product.id %}" class="btn btn-secondary" style="padding: 5px 10px;">Edit</a>
+                <a href="{% url 'custom_admin:product_delete' product.id %}" class="btn btn-danger" style="padding: 5px 10px;" onclick="return confirm('Delete this product?')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
